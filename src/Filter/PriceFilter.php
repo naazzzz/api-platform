@@ -24,10 +24,9 @@ class PriceFilter extends AbstractFilter implements RangeFilterInterface
 
 
 
-        if ($property == "page") {
-            return;
-        }
+
         if($property == 'minValue'){
+
             $parameterName = $queryNameGenerator->generateParameterName($property);
             $alias = $queryBuilder->getRootAliases()[0];
             foreach ($this->properties as $key => $item){
@@ -45,6 +44,7 @@ class PriceFilter extends AbstractFilter implements RangeFilterInterface
                     ->setParameter(sprintf('%s_1', $parameterName), $value);
             }
         }
+
 
 
 

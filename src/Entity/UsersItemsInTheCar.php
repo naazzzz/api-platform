@@ -12,12 +12,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UsersItemsInTheCarRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => [self::ITEM, self::ITEM_READ]],
-    denormalizationContext: ['groups' => [self::ITEM, self::ITEM_WRITE,]]
+    normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY]],
+    denormalizationContext: ['groups' => ['SetItems']],
+    paginationItemsPerPage: 10
 )]
 class UsersItemsInTheCar extends BaseEntity
 {
-
+    public const S_GROUP_GET_ONE = 'GetItems';
+    public const S_GROUP_GET_MANY = 'GetItemsObj';
     public function __construct()
     {
         parent::__construct();
@@ -26,16 +28,17 @@ class UsersItemsInTheCar extends BaseEntity
 
     }
 
-    #[Groups(self::ITEM)]
     #[ApiProperty(readableLink: false, writableLink: false)]
     #[ORM\ManyToOne(targetEntity: UserCar::class, cascade: ['persist','remove'], inversedBy: 'itemsInTheCar')]
     #[ORM\JoinColumn(name: 'car_id',referencedColumnName: 'id')]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetItems'])]
     public UserCar $car;
 
-    #[Groups(self::ITEM)]
+
     #[ApiProperty(readableLink: false, writableLink: false)]
     #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'itemsInTheCar')]
     #[ORM\JoinTable(name:'products')]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetItems'])]
     public iterable $products;
 
     /**

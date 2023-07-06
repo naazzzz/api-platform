@@ -25,5 +25,14 @@ services:
             - '@security.password_hasher'
         tags:
             - { name: kernel.event_listener, event: league.oauth2_server.event.user_resolve, method: onUserResolve }
+    App\Doctrine\CurrentUserExtention:
+        tags:
+            - { name: api_platform.doctrine.orm.query_extension.collection }
+            - { name: api_platform.doctrine.orm.query_extension.item }
+    App\Serializer\UserContextBuilder:
+        decorates: 'api_platform.serializer.context_builder'
+        arguments: [ '@App\Serializer\UserContextBuilder.inner' ]
+        autoconfigure: false
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

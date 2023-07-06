@@ -17,8 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PriceRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => [self::ITEM, self::ITEM_READ]],
-    denormalizationContext: ['groups' => [self::ITEM, self::ITEM_WRITE,]]
+    normalizationContext: ['groups' => ['GetPrice']],
+    denormalizationContext: ['groups' => ['SetPrice']]
 )]
 #[ApiFilter(PriceFilter::class, properties: ['price'])]
 class Price extends BaseEntity
@@ -30,11 +30,10 @@ class Price extends BaseEntity
         $this->products = new ArrayCollection();
     }
 
-    #[Groups(self::ITEM)]
+    #[Groups(['SetPrice','GetPrice'])]
     #[ORM\Column]
     private ?int $price = null;
 
-    #[Groups(self::ITEM_READ)]
     #[ORM\OneToMany(mappedBy: 'price', targetEntity: Product::class)]
     private iterable $products;
 

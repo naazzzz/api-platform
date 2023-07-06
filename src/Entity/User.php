@@ -2,20 +2,21 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\EventListener\EntityListener;
 use App\Repository\UserRepository;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\PrePersist;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -25,27 +26,47 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource
 (
     operations: [
-        new Get(),
-        new Post(),
-        new GetCollection(),
-        new Put(),
-        new Delete(),
+        new Get(
+            normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY]],
+            denormalizationContext: ['groups' => ['SetUser',]],
+            security: "is_granted('" . self::ROLE_ADMIN . "') or is_granted('" . self::ROLE_USER . "')"
+        ),
+        new Post(
+            normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY]],
+            denormalizationContext: ['groups' => ['SetUser']],
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY]],
+            denormalizationContext: ['groups' => ['SetUser']],
+            security: "is_granted('" . self::ROLE_ADMIN . "') or is_granted('" . self::ROLE_USER . "')"
+        ),
+        new Put(
+            normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY]],
+            denormalizationContext: ['groups' => ['SetUser']],
+            security: "is_granted('" . self::ROLE_ADMIN . "') or is_granted('" . self::ROLE_USER . "')"
+        ),
+        new Delete(
+            security: "is_granted('" . self::ROLE_ADMIN . "')"
+        ),
     ],
-    normalizationContext: ['groups' => [self::ITEM, self::ITEM_READ]],
-    denormalizationContext: ['groups' => [self::ITEM, self::ITEM_WRITE,]]
+    paginationEnabled: true,
+
 )
 ]
 #[UniqueEntity("email", 'Пользователь с таким email уже существует')]
-//#[ApiFilter(SearchFilter::class, strategy: 'partial')]
 class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const S_GROUP_GET_ONE = 'GetUser';
+    public const S_GROUP_GET_MANY = 'GetUserObj';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_USER = 'ROLE_USER';
 
-
-    #[Groups(self::ITEM)]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY,'SetUser'])]
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Email]
     public ?string $email = null;
 
+    #[Groups(['GetUserFromAdmin','SetUserFromAdmin'])]
     #[ORM\Column]
     private array $roles = [];
 
@@ -54,8 +75,9 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
 
     #[SerializedName('password')]
     #[Assert\Length(min: 5, minMessage: "Short password")]
-    #[Groups(self::ITEM_WRITE)]
+    #[Groups('SetUser')]
     private ?string $plainPassword = null;
+
 
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserCar::class, cascade: ['persist'])]
     public UserCar $car;

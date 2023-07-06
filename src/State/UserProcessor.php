@@ -28,8 +28,8 @@ class UserProcessor implements ProcessorInterface
             $car = new UserCar();
             $car->setUser($data);
             $data->setUsersCars($car);
-
         }
+
         $this->innerProcessor->process($data, $operation, $uriVariables, $context);
     }
 }

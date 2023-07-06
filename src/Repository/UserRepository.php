@@ -27,11 +27,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function save(User $entity, bool $flush = false): void
     {
-//        if(empty($entity->car)) {
-//            $car = new UserCar();
-//            $this->repository->save($car);
-//            $entity->car = $car;
-//        }
 
         $this->getEntityManager()->persist($entity);
 

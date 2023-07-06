@@ -2,17 +2,21 @@
 
 namespace App\Entity;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\PostPersist;
+use Doctrine\ORM\Mapping\PrePersist;
 use League\Bundle\OAuth2ServerBundle\Model\AbstractClient;
-
+use Symfony\Component\Serializer\Annotation\Groups;
+#[ORM\HasLifecycleCallbacks]
 abstract class BaseEntity
 {
-    public const ITEM = 'ITEM';
-    public const ITEM_READ = 'ITEM:write';
-    public const ITEM_WRITE = 'ITEM:read';
+    public const S_GROUP_GET_BASE = 'GetBase';
+    public const S_GROUP_GET_OBJ_BASE = 'GetObjBase';
+    public const S_GROUP_GET_ID = 'GetId';
 
-    public const ROLE_USER = 'ROLE_USER';
-    public const ROLE_ADMIN = 'ROLE_ADMIN';
+
 
     public function __construct()
     {
@@ -23,11 +27,14 @@ abstract class BaseEntity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([self::S_GROUP_GET_ID,self::S_GROUP_GET_BASE,self::S_GROUP_GET_OBJ_BASE])]
     public ?int $id = null;
 
+    #[Groups([self::S_GROUP_GET_BASE,self::S_GROUP_GET_OBJ_BASE,'GetDateFromAdmin'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     public ?\DateTimeInterface $dateCreate;
 
+    #[Groups([self::S_GROUP_GET_BASE,self::S_GROUP_GET_OBJ_BASE,'GetDateFromAdmin'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     public ?\DateTimeInterface $dateUpdate;
 
@@ -79,10 +86,13 @@ abstract class BaseEntity
     /**
      * @param \DateTimeInterface|null $dateUpdate
      */
+
     public function setDateUpdate(?\DateTimeInterface $dateUpdate): void
     {
         $this->dateUpdate = $dateUpdate;
     }
+
+
 
 
 
