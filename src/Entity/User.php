@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\EventListener\EntityListener;
@@ -36,7 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             denormalizationContext: ['groups' => ['SetUser']],
         ),
         new GetCollection(
-            normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY]],
+            normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY,]],
             denormalizationContext: ['groups' => ['SetUser']],
             security: "is_granted('" . self::ROLE_ADMIN . "') or is_granted('" . self::ROLE_USER . "')"
         ),
@@ -48,7 +49,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete(
             security: "is_granted('" . self::ROLE_ADMIN . "')"
         ),
+
     ],
+
     paginationEnabled: true,
 
 )
@@ -58,8 +61,7 @@ class User extends BaseEntity implements UserInterface, PasswordAuthenticatedUse
 {
     public const S_GROUP_GET_ONE = 'GetUser';
     public const S_GROUP_GET_MANY = 'GetUserObj';
-    public const ROLE_ADMIN = 'ROLE_ADMIN';
-    public const ROLE_USER = 'ROLE_USER';
+
 
     #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY,'SetUser'])]
     #[ORM\Column(length: 180, unique: true)]

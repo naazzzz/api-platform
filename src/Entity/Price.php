@@ -30,7 +30,7 @@ class Price extends BaseEntity
         $this->products = new ArrayCollection();
     }
 
-    #[Groups(['SetPrice','GetPrice'])]
+    #[Groups(['SetPrice','GetPrice','GetUsersItemsInTheCar'])]
     #[ORM\Column]
     private ?int $price = null;
 

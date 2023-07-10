@@ -35,10 +35,10 @@ class UsersItemsInTheCar extends BaseEntity
     public UserCar $car;
 
 
-    #[ApiProperty(readableLink: false, writableLink: false)]
-    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'itemsInTheCar')]
+    #[ApiProperty(readableLink: true, writableLink: false)]
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'itemsInTheCar',cascade: ['persist'])]
     #[ORM\JoinTable(name:'products')]
-    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetItems'])]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetItems','GetUsersItemsInTheCar'])]
     public iterable $products;
 
     /**

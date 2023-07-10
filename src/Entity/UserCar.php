@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
@@ -19,8 +20,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: UsersCarsRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(),
-        new GetCollection(),
+        new GetCollection(security: "is_granted('" . self::ROLE_ADMIN . "')" ),
+        new Get(
+            uriTemplate: '/users/{id}/car',
+            uriVariables: [
+                'id' => new Link(
+                    fromProperty: 'car',
+                    fromClass: User::class
+                )
+            ],
+            normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'GetUsersItemsInTheCar']],
+            denormalizationContext: ['groups' => ['SetUser']],
+            security: "is_granted('" . self::ROLE_USER . "')",
+        )
     ],
     normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY]],
     denormalizationContext: ['groups' => ['SetCar']],
@@ -43,6 +55,7 @@ class UserCar extends BaseEntity
     #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetCar'])]
     public User $user;
 
+    #[Groups(['GetUsersItemsInTheCar'])]
     #[ORM\OneToMany(mappedBy: 'car', targetEntity: UsersItemsInTheCar::class,cascade: ['persist','remove'])]
     public iterable $itemsInTheCar;
 

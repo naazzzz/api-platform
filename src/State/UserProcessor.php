@@ -20,7 +20,6 @@ class UserProcessor implements ProcessorInterface
     {
     }
 
-//сделать виртуальное сво-во не хранящееся в базе
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         if ($data instanceof User && $data->getPlainPassword()) {

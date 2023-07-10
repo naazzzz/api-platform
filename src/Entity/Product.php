@@ -50,27 +50,27 @@ class Product extends BaseEntity
 
     }
 
-    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct'])]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar'])]
     #[ORM\Column]
     private ?int $category = null;
 
-    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct'])]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct'])]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar'])]
     #[ORM\Column]
     private ?int $amount = null;
 
-    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct'])]
-    #[ApiProperty(readableLink: false, writableLink: false)]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar'])]
+    #[ApiProperty(readableLink: true, writableLink: false)]
     #[ORM\ManyToOne(targetEntity: Price::class, inversedBy: 'products')]
     private ?Price $price = null;
 
     #[ORM\ManyToMany(targetEntity: UsersItemsInTheCar::class, mappedBy: 'products')]
     public iterable $itemsInTheCar;
 
-    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct'])]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar'])]
     #[ORM\ManyToOne(targetEntity: Media::class)]
     #[ORM\JoinColumn(nullable: true)]
     #[ApiProperty(types: ['https://schema.org/image'])]
