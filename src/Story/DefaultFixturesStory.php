@@ -38,7 +38,7 @@ final class DefaultFixturesStory extends Story
 
         MediaFactory::createMany(5);
         PriceFactory::createMany(200);
-        ProductFactory::createMany(200);
+        ProductFactory::createMany(20);
         UserFactory::createMany(50);
     }
 }

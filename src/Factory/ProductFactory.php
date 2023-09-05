@@ -46,7 +46,7 @@ final class ProductFactory extends ModelFactory
             'category' => self::faker()->randomElement(Product::PRODUCTS_CATEGORY_ARRAY),
             'dateCreate' => self::faker()->dateTime(),
             'dateUpdate' => self::faker()->dateTime(),
-            'name' => self::faker()->word(),
+            'name' => self::faker()->randomElement(['mango','car','home','apple','vape']),
             'image'=> $image,
             'price'=>$price
         ];

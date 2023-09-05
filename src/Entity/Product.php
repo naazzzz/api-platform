@@ -7,6 +7,13 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Entity\Localization\Locale;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,6 +21,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ApiResource(
+    operations:[
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete(),
+        new Patch()
+    ],
     normalizationContext: ['groups' => [self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY]],
     denormalizationContext: ['groups' => ['SetProduct']],
     paginationItemsPerPage: 10
@@ -47,16 +62,16 @@ class Product extends BaseEntity
         parent::__construct();
 
         $this->itemsInTheCar = new ArrayCollection();
-
+        $this->propertyTranslations = new ArrayCollection();
     }
 
     #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar'])]
     #[ORM\Column]
     private ?int $category = null;
 
-    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar'])]
+    #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar', 'TRANSLATABLE'])]
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    public ?string $name = null;
 
     #[Groups([self::S_GROUP_GET_ONE, self::S_GROUP_GET_MANY, 'SetProduct', 'GetUsersItemsInTheCar'])]
     #[ORM\Column]
@@ -75,6 +90,10 @@ class Product extends BaseEntity
     #[ORM\JoinColumn(nullable: true)]
     #[ApiProperty(types: ['https://schema.org/image'])]
     public ?Media $image = null;
+
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Locale::class)]
+    public iterable $propertyTranslations;
+
 
     public function getItemsInTheCar(): iterable
     {

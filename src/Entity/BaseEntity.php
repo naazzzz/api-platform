@@ -17,7 +17,10 @@ abstract class BaseEntity
     public const S_GROUP_GET_ID = 'GetId';
 
     public const ROLE_ADMIN = 'ROLE_ADMIN';
+
     public const ROLE_USER = 'ROLE_USER';
+
+    public const S_GROUP_TRANSLATABLE = 'TRANSLATABLE';
 
     public function __construct()
     {

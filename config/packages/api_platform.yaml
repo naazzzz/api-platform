@@ -25,3 +25,30 @@ api_platform:
 
     # The oauth scopes.
     scopes: []
+  formats:
+    json:
+      mime_types: [ 'application/json' ]
+
+    jsonld:
+      mime_types: [ 'application/ld+json' ]
+
+    html:
+      mime_types: [ 'text/html' ]
+
+    formData:
+      mime_types: [ 'multipart/form-data' ]
+
+#    # The list of enabled patch formats. The first one will be the default.
+#    patch_formats:
+#      json:
+#        mime_types: [ 'application/json' ]
+#
+#    # The list of enabled error formats. The first one will be the default.
+#    error_formats:
+#      jsonproblem:
+#        mime_types: [ 'application/problem+json' ]
+#
+#      jsonld:
+#        mime_types: [ 'application/ld+json' ]
+#
+#      # ...
